@@ -107,7 +107,7 @@ function BtnAdd()
     $(v).find("input").val('');
     $(v).removeClass("d-none");
     $(v).find("th").first().html($('#TBody tr').length - 1);
-	 alert('success')
+	 
 }
 
 function BtnDel(v)
@@ -184,7 +184,7 @@ function BtnAdd()
     $(v).find("input").val('');
     $(v).removeClass("d-none");
     $(v).find("th").first().html($('#TBody tr').length - 1);
-	 alert('success')
+	
 }
 
 function BtnDel(v)
@@ -816,7 +816,7 @@ function GetTotal()
                 
 			
       
-  <form method="POST" action="https://script.google.com/macros/s/AKfycbzr_sOtMqSMTZNppDwRQI5Vs81sLA-2N_NJu8m1Ply1SRsSw8TiSmkLCLc_32Qli2hh/exec">
+  <form method="POST" id="sheetdb-form" action="https://script.google.com/macros/s/AKfycbzr_sOtMqSMTZNppDwRQI5Vs81sLA-2N_NJu8m1Ply1SRsSw8TiSmkLCLc_32Qli2hh/exec">
         
               
                 <div class="row">
@@ -918,6 +918,19 @@ function GetTotal()
 			
          
 <script>
+	 var form = document.getElementById('sheetdb-form');
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    fetch(form.action, {
+        method : "POST",
+        body: new FormData(document.getElementById("sheetdb-form")),
+    }).then(
+        response => response.json()
+    ).then((html) => {
+      // you can put any JS code here
+      alert('success')
+    });
+  });
 
       google.script.run.withSuccessHandler(DisplayData).TableData(); // 02. 
 
@@ -975,7 +988,7 @@ function BtnAdd()
     $(v).find("input").val('');
     $(v).removeClass("d-none");
     $(v).find("th").first().html($('#TBody tr').length - 1);
-	 alert('success');
+	
 }
 
 function BtnDel(v)
