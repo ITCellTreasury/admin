@@ -586,13 +586,13 @@
                 <table class="table table-hover">
                     <thead class="table-info">
                       <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">Sl.No</th>
                         <th scope="col">Particular</th>
                         <th scope="col" class="text-end">Qty</th>
                         <th scope="col" class="text-end">Rate</th>
                         <th scope="col" class="text-end">Amount</th>
                         <th scope="col" class="NoPrint">                         
-                            <button type="button" class="btn btn-success" onclick="BtnAdd()"><i class=" bxs-plus-square"></i></button>
+                            <button type="button" class="btn btn-success" onclick="BtnAdd()"><i class=" ri-file-add-line"></i></button>
                           
                         </th>
 
@@ -611,7 +611,7 @@
                         <td><input type="number" class="form-control text-end" name="qty" onchange="Calc(this);"></td>
                         <td><input type="number" class="form-control text-end" name="rate"  onchange="Calc(this);"></td>
                         <td><input type="number" class="form-control text-end" name="amt" value="0" readonly=""></td>
-                        <td class="NoPrint"><button type="button" class="btn  btn-danger" onclick="BtnDel(this)"><i class=" x-circle"></i></button></td>
+                        <td class="NoPrint"><button type="button" class="btn  btn-danger" onclick="BtnDel(this)"><i class="  ri-close-circle-line"></i></button></td>
                       </tr>
                     </tbody>
                   </table>
@@ -619,8 +619,8 @@
 
                   <div class="row">
                     <div class="col-8">
-                       <button type="submit" class="btn btn-primary" >submit</button>
-                        <button type="button" class="btn btn-primary" onclick="GetPrint()">Print</button>
+                       <button type="submit" class="btn btn-primary" >submit<i class=" ri-send-plane-fill"></i></button>
+                        <button type="button" class="btn btn-primary" onclick="GetPrint()"><i class=" ri-printer-fill"></i>Print</button>
 
                     </div>
                     <div class="col-4">
