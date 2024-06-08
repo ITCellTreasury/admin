@@ -36,6 +36,130 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+	<script>
+
+      google.script.run.withSuccessHandler(DisplayData).TableData(); // 02. 
+
+      function DisplayData(data)  // 03.
+      {
+
+        $(document).ready(function () {
+
+          FillDataList();
+
+          var Table="", Rows="", Columns="";
+
+          $.each(data, function(key, value) // 04 
+          {
+              Columns = "";
+              $.each(value, function(key1, value1) // 05 
+              {
+                Columns = Columns + '<td>' + value1 + '</td>'; // 06 
+              });
+
+              if (Columns != "") // 07 
+              {
+                  Rows = Rows + '<tr>' + Columns + '</tr>';
+              }
+          });
+
+          $("#MyTBody").append(Rows); // 08  
+
+        });
+      }
+  
+  $(document).ready(function () {
+     MaxInv();
+	  FillDataList();
+});
+function MaxInv()
+{
+       //01
+        $.getJSON("https://script.google.com/macros/s/AKfycbxIZqqipPMh5s3Z8uQ-zJqIxJB2K7dHMMcaZC22rxgvnGNHL_TeESynEJauMKRxJfAO/exec?page=max", 
+        function (data) {
+             $("input[name='inv_no']").val(data); //02
+        });
+}
+
+function GetPrint()
+{
+    /*For Print*/
+    window.print();
+}
+
+function BtnAdd()
+{
+    /*Add Button*/
+    var v = $("#TRow").clone().appendTo("#TBody") ;
+    $(v).find("input").val('');
+    $(v).removeClass("d-none");
+    $(v).find("th").first().html($('#TBody tr').length - 1);
+}
+
+function BtnDel(v)
+{
+    /*Delete Button*/
+       $(v).parent().parent().remove(); 
+       GetTotal();
+
+        $("#TBody").find("tr").each(
+        function(index)
+        {
+           $(this).find("th").first().html(index);
+        }
+
+       );
+}
+
+function Calc(v)
+{
+    /*Detail Calculation Each Row*/
+    var index = $(v).parent().parent().index();
+    
+    var qty = document.getElementsByName("qty")[index].value;
+    var rate = document.getElementsByName("rate")[index].value;
+
+    var amt = qty * rate;
+    document.getElementsByName("amt")[index].value = amt;
+
+    GetTotal();
+}
+
+function GetTotal()
+{
+    /*Footer Calculation*/   
+
+    var sum=0;
+    var amts =  document.getElementsByName("amt");
+
+    for (let index = 0; index < amts.length; index++)
+    {
+        var amt = amts[index].value;
+        sum = +(sum) +  +(amt) ; 
+    }
+
+    document.getElementById("FTotal").value = sum;
+
+    var gst =  document.getElementById("FGST").value;
+    var net = +(sum) + +(gst);
+    document.getElementById("FNet").value = net;
+
+}
+function FillDataList()
+{
+        $.getJSON("https://script.google.com/macros/s/AKfycbzZN4BaMi_pmsqPe0QAypZhQ_xqDDyfWyVodZWLTjALSH5bK75FXn01inPLjR8_UyjC/exec?page=dropdown", 
+        function (data) {                              //01
+          var Options="";                              
+          $.each(data, function(key, value)            //02
+          {
+            Options = Options + '<option>' + value + '</option>';   //03
+          });
+          $(".item_nm").append(Options);               //04
+        });
+}
+  
+
+    </script>	
 </head>
 
 <body>
@@ -509,12 +633,12 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Blank Page</h1>
+      <h1>Invoice</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
           <li class="breadcrumb-item">Pages</li>
-          <li class="breadcrumb-item active">Blank</li>
+          <li class="breadcrumb-item active">Invoice</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
