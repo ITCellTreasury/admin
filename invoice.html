@@ -644,10 +644,8 @@
  </form>  
     
 
-			
-         
-<script>
-	 var form = document.getElementById('sheetdb-form');
+	<script>
+  var form = document.getElementById('sheetdb-form');
   form.addEventListener("submit", e => {
     e.preventDefault();
     fetch(form.action, {
@@ -660,6 +658,32 @@
       alert('success')
     });
   });
+</script>		
+         
+<script>
+	function Post(e)          //03 
+{
+    let MySheets = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/14uvuSxe6UCl04ds59r_5H8zjRQNPgrp0jFPOJ6oz460/edit#gid=0");  //01
+    let InvSheet = MySheets.getSheetByName("Inv"); 
+    
+    let Inv = e.parameters; //04
+    let Qtys = Inv.qty;     //05 
+     
+     InvSheet.appendRow([Inv.inv_no[0], Inv.inv_dt[0], Inv.cust_nm[0], Inv.addr[0], Inv.city[0]]) ;    //06
+
+    Qtys.forEach(function(value, index)                       //07
+    {
+      InvSheet.appendRow(["", "", "", "", "", Inv.item_nm[index], value, Inv.rate[index], Inv.amt[index]]) ;  //08
+    });
+
+    // return ContentService.createTextOutput("Data Submitted"); //09
+     
+     return alert('success')
+
+}
+
+
+	
 
       google.script.run.withSuccessHandler(DisplayData).TableData(); // 02. 
 
