@@ -157,7 +157,153 @@ function FillDataList()
           $(".item_nm").append(Options);               //04
         });
 }
-  
+  function GetPrint()
+{
+    /*For Print*/
+    window.print();
+}
+
+function BtnAdd()
+{
+    /*Add Button*/
+    var v = $("#TRow").clone().appendTo("#TBody") ;
+    $(v).find("input").val('');
+    $(v).removeClass("d-none");
+    $(v).find("th").first().html($('#TBody tr').length - 1);
+}
+
+function BtnDel(v)
+{
+    /*Delete Button*/
+       $(v).parent().parent().remove(); 
+       GetTotal();
+
+        $("#TBody").find("tr").each(
+        function(index)
+        {
+           $(this).find("th").first().html(index);
+        }
+
+       );
+}
+
+function Calc(v)
+{
+    /*Detail Calculation Each Row*/
+    var index = $(v).parent().parent().index();
+    
+    var qty = document.getElementsByName("qty")[index].value;
+    var rate = document.getElementsByName("rate")[index].value;
+
+    var amt = qty * rate;
+    document.getElementsByName("amt")[index].value = amt;
+
+    GetTotal();
+}
+function doPost(e)          //03 
+{
+    let MySheets = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/14uvuSxe6UCl04ds59r_5H8zjRQNPgrp0jFPOJ6oz460/edit#gid=0");  //01
+    let InvSheet = MySheets.getSheetByName("Inv"); 
+    
+    let Inv = e.parameters; //04
+    let Qtys = Inv.qty;     //05 
+     
+     InvSheet.appendRow([Inv.inv_no[0], Inv.inv_dt[0], Inv.cust_nm[0], Inv.addr[0], Inv.city[0]]) ;    //06
+
+    Qtys.forEach(function(value, index)                       //07
+    {
+      InvSheet.appendRow(["", "", "", "", "", Inv.item_nm[index], value, Inv.rate[index], Inv.amt[index]]) ;  //08
+    });
+
+    // return ContentService.createTextOutput("Data Submitted"); //09
+     
+     return sweetAlert_submit();
+
+}
+
+function sweetAlert_submit(){
+  const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: false
+})
+
+swalWithBootstrapButtons.fire({
+  title: 'Are you sure?',
+  text: "You won't be able to revert this!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonText: 'Yes, delete it!',
+  cancelButtonText: 'No, cancel!',
+  reverseButtons: true
+}).then((result) => {
+  if (result.isConfirmed) {
+    swalWithBootstrapButtons.fire(
+      'Deleted!',
+      'Your file has been deleted.',
+      'success'
+    )
+  } else if (
+    /* Read more about handling dismissals below */
+    result.dismiss === Swal.DismissReason.cancel
+  ) {
+    swalWithBootstrapButtons.fire(
+      'Cancelled',
+      'Your imaginary file is safe :)',
+      'error'
+    )
+  }
+})
+}
+function doGet(e) {
+  let page = e.parameter.page;                    //03
+
+  if (page == null || page == undefined) {
+    page = "index";
+    return HtmlService.createTemplateFromFile(page).evaluate();
+  }
+  else if (page == 'dropdown') {                  //04
+    let table = ItemSheet.getRange("A:A").getValues().filter(r => r.every(Boolean));                                //05
+    let str = JSON.stringify(table);              //06
+    return ContentService.createTextOutput(str);  //07 
+  }
+  if (page == null || page == undefined) {                      
+   page = "index";
+    return HtmlService.createTemplateFromFile(page).evaluate();
+  }
+  else if (page == 'max') {                                           //04
+    let table = InvSheet.getRange("A:A").getValues().filter(Number);  //05
+    let myMax = Math.max(...table) + 1 ;                              //06
+   return ContentService.createTextOutput(myMax);                    //07
+  }
+}
+
+function TableData() //03
+ {
+  return Sheets.Spreadsheets.Values.get("https://docs.google.com/spreadsheets/d/14uvuSxe6UCl04ds59r_5H8zjRQNPgrp0jFPOJ6oz460","Inv!A:E").values; //04
+}
+function GetTotal()
+{
+    /*Footer Calculation*/   
+
+    var sum=0;
+    var amts =  document.getElementsByName("amt");
+
+    for (let index = 0; index < amts.length; index++)
+    {
+        var amt = amts[index].value;
+        sum = +(sum) +  +(amt) ; 
+    }
+
+    document.getElementById("FTotal").value = sum;
+
+    var gst =  document.getElementById("FGST").value;
+    var net = +(sum) + +(gst);
+    document.getElementById("FNet").value = net;
+
+}
 
     </script>	
 </head>
