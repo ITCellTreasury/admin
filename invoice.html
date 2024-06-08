@@ -796,12 +796,15 @@ function GetTotal()
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Invoice </h5>
-             <div class="container ">
-        <form method="POST" action="https://script.google.com/macros/s/AKfycbzr_sOtMqSMTZNppDwRQI5Vs81sLA-2N_NJu8m1Ply1SRsSw8TiSmkLCLc_32Qli2hh/exec">
 
+		    
+                
+			<div class="container ">
+      
+  <form method="POST" action="https://script.google.com/macros/s/AKfycbzr_sOtMqSMTZNppDwRQI5Vs81sLA-2N_NJu8m1Ply1SRsSw8TiSmkLCLc_32Qli2hh/exec">
         <div class="card">
             <div class="card-header text-center">
-              <h4>INVOICE App Script</h4>
+             
             </div>
             <div class="card-body">
               
@@ -849,7 +852,7 @@ function GetTotal()
                         <th scope="col" class="text-end">Rate</th>
                         <th scope="col" class="text-end">Amount</th>
                         <th scope="col" class="NoPrint">                         
-                            <button type="button" class="btn btn-sm btn-success" onclick="BtnAdd()">+</button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="BtnAdd()">➕</button>
                           
                         </th>
 
@@ -860,15 +863,15 @@ function GetTotal()
                         <th scope="row">1</th>
 						  
                     <!--  <td><input type="text" class="form-control" name="item_nm"></td> -->
-					 <!-- <input class="form-control " name="item_nm" list="mylist" autocomplete="off">
-<datalist id="mylist" class="item_nm"> </datalist>-->
-                    <td>   <select class="form-control item_nm" name="item_nm"  autocomplete="off">
+					<td> <input class="form-control " name="item_nm" list="mylist" autocomplete="off">
+<datalist id="mylist" class="item_nm"> </datalist></td>
+                   <!--  <td>   <select class="form-control item_nm" name="item_nm"  autocomplete="off">
       <option>Select</option>
- </select> </td>
+ </select> </td>-->
                         <td><input type="number" class="form-control text-end" name="qty" onchange="Calc(this);"></td>
                         <td><input type="number" class="form-control text-end" name="rate"  onchange="Calc(this);"></td>
                         <td><input type="number" class="form-control text-end" name="amt" value="0" readonly=""></td>
-                        <td class="NoPrint"><button type="button" class="btn btn-sm btn-danger" onclick="BtnDel(this)">X</button></td>
+                        <td class="NoPrint"><button type="button" class="btn btn-sm btn-danger" onclick="BtnDel(this)">✖️</button></td>
                       </tr>
                     </tbody>
                   </table>
@@ -899,8 +902,135 @@ function GetTotal()
                 </div>
              </div>
           </div>
-  </form> 
+ </form>  
     </div>
+
+			
+         
+<script>
+
+      google.script.run.withSuccessHandler(DisplayData).TableData(); // 02. 
+
+      function DisplayData(data)  // 03.
+      {
+
+        $(document).ready(function () {
+
+          FillDataList();
+
+          var Table="", Rows="", Columns="";
+
+          $.each(data, function(key, value) // 04 
+          {
+              Columns = "";
+              $.each(value, function(key1, value1) // 05 
+              {
+                Columns = Columns + '<td>' + value1 + '</td>'; // 06 
+              });
+
+              if (Columns != "") // 07 
+              {
+                  Rows = Rows + '<tr>' + Columns + '</tr>';
+              }
+          });
+
+          $("#MyTBody").append(Rows); // 08  
+
+        });
+      }
+  
+  $(document).ready(function () {
+     MaxInv();
+	  FillDataList();
+});
+function MaxInv()
+{
+       //01
+        $.getJSON("https://script.google.com/macros/s/AKfycbxIZqqipPMh5s3Z8uQ-zJqIxJB2K7dHMMcaZC22rxgvnGNHL_TeESynEJauMKRxJfAO/exec?page=max", 
+        function (data) {
+             $("input[name='inv_no']").val(data); //02
+        });
+}
+
+function GetPrint()
+{
+    /*For Print*/
+    window.print();
+}
+
+function BtnAdd()
+{
+    /*Add Button*/
+    var v = $("#TRow").clone().appendTo("#TBody") ;
+    $(v).find("input").val('');
+    $(v).removeClass("d-none");
+    $(v).find("th").first().html($('#TBody tr').length - 1);
+}
+
+function BtnDel(v)
+{
+    /*Delete Button*/
+       $(v).parent().parent().remove(); 
+       GetTotal();
+
+        $("#TBody").find("tr").each(
+        function(index)
+        {
+           $(this).find("th").first().html(index);
+        }
+
+       );
+}
+
+function Calc(v)
+{
+    /*Detail Calculation Each Row*/
+    var index = $(v).parent().parent().index();
+    
+    var qty = document.getElementsByName("qty")[index].value;
+    var rate = document.getElementsByName("rate")[index].value;
+
+    var amt = qty * rate;
+    document.getElementsByName("amt")[index].value = amt;
+
+    GetTotal();
+}
+
+function GetTotal()
+{
+    /*Footer Calculation*/   
+
+    var sum=0;
+    var amts =  document.getElementsByName("amt");
+
+    for (let index = 0; index < amts.length; index++)
+    {
+        var amt = amts[index].value;
+        sum = +(sum) +  +(amt) ; 
+    }
+
+    document.getElementById("FTotal").value = sum;
+
+    var gst =  document.getElementById("FGST").value;
+    var net = +(sum) + +(gst);
+    document.getElementById("FNet").value = net;
+
+}
+function FillDataList()
+{
+        $.getJSON("https://script.google.com/macros/s/AKfycbzZN4BaMi_pmsqPe0QAypZhQ_xqDDyfWyVodZWLTjALSH5bK75FXn01inPLjR8_UyjC/exec?page=dropdown", 
+        function (data) {                              //01
+          var Options="";                              
+          $.each(data, function(key, value)            //02
+          {
+            Options = Options + '<option>' + value + '</option>';   //03
+          });
+          $(".item_nm").append(Options);               //04
+        });
+}
+  
+
+    </script>	
 
 			
       
